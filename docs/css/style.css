@@ -1,0 +1,101 @@
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+        /* スクロールバーのスタイル（ダークモード対応） */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .dark .custom-scrollbar::-webkit-scrollbar-track {
+            background: #0f172a; /* slate-900 */
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+        
+        #code-editor-container {
+            height: 250px;
+        }
+        /* Common styles for slide and exercise description content */
+        .content-container h3 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #3b82f6;
+            padding-bottom: 0.5rem;
+        }
+         .content-container h4 {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            border-left: 4px solid #3b82f6;
+            padding-left: 0.75rem;
+        }
+        .content-container p, .content-container ul {
+            margin-bottom: 1rem;
+            line-height: 1.8;
+        }
+        .content-container strong {
+            font-weight: 700;
+        }
+        .dark .content-container strong {
+             color: #e2e8f0;
+        }
+        /* Style for inline code, but NOT for code inside <pre> */
+        .content-container :not(pre) > code {
+            background-color: #e2e8f0;
+            color: #1e40af;
+            font-weight: 600;
+            padding: 0.2em 0.4em;
+            margin: 0;
+            font-size: 90%;
+            border-radius: 3px;
+        }
+        .dark .content-container :not(pre) > code {
+             background-color: #334155;
+             color: #93c5fd;
+        }
+        .content-container pre {
+            background-color: #1e293b; /* slate-800 */
+            color: #e2e8f0;
+            padding: 1em;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        /* Reset styles for code inside <pre> */
+        .content-container pre code {
+            background-color: transparent;
+            padding: 0;
+            color: inherit;
+            font-weight: normal;
+            font-size: 100%;
+        }
+        .content-container ul {
+            list-style-type: disc;
+            margin-left: 1.5rem;
+        }
+         .content-container ul ul {
+            list-style-type: circle;
+            margin-left: 1.5rem;
+            margin-top: 0.5rem;
+        }
+        .disabled-chapter {
+            color: #9ca3af;
+            cursor: not-allowed;
+            background-color: #f3f4f6;
+        }
+        .dark .disabled-chapter {
+            color: #4b5563;
+            background-color: #1e293b; /* slate-800 */
+        }

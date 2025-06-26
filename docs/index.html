@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ES6講座</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Acorn: JavaScript Parser -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/acorn/8.11.3/acorn.min.js"></script>
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    <!-- Monaco Editor Loader -->
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.49.0/min/vs/loader.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="h-full bg-gray-100 dark:bg-slate-950 text-gray-800 dark:text-gray-200 transition-colors duration-300">
+    
+    <div id="menu-overlay" class="fixed inset-0 bg-black/50 z-10 hidden"></div>
+
+    <!-- Chapter Navigation -->
+    <aside id="chapter-sidebar" class="fixed top-0 left-0 w-72 h-full bg-white dark:bg-slate-900 shadow-xl z-20 transform -translate-x-full transition-transform duration-300 ease-in-out p-6 pt-8 overflow-y-auto custom-scrollbar">
+        <h2 class="text-2xl font-bold mb-6">チャプター</h2>
+        <ul id="chapter-list" class="space-y-2">
+            <!-- Chapter list will be dynamically generated here -->
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="w-full h-full flex flex-col p-4 sm:p-6 lg:p-8">
+        <!-- Top bar with Menu and Progress -->
+        <div class="flex items-center gap-4 mb-4 flex-shrink-0">
+            <button id="menu-toggle-btn" class="p-2 rounded-md bg-white dark:bg-slate-800 shadow hover:bg-gray-200 dark:hover:bg-slate-700 transition">
+                <svg id="menu-open-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+            <div id="progress-bar-container" class="w-full bg-gray-200 dark:bg-slate-800 rounded-full h-4">
+                <div id="progress-bar" class="bg-blue-600 h-4 rounded-full transition-all duration-500 flex items-center justify-center text-xs font-bold text-white" style="width: 0%"></div>
+            </div>
+             <button id="theme-toggle-btn" class="p-2 rounded-md bg-white dark:bg-slate-800 shadow hover:bg-gray-200 dark:hover:bg-slate-700 transition">
+                <svg id="theme-icon-light" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <svg id="theme-icon-dark" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+            </button>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-lg shadow-lg flex-grow flex flex-col overflow-hidden">
+             <div id="slide-container" class="flex-grow flex flex-col overflow-hidden">
+                <h2 id="slide-title" class="text-2xl font-bold mb-4 flex-shrink-0"></h2>
+                <div id="slide-content" class="content-container flex-grow overflow-y-auto pr-2 custom-scrollbar">
+                    <!-- Slide content will be injected here -->
+                </div>
+            </div>
+
+            <div id="exercise-container" class="hidden flex-grow flex flex-col overflow-hidden">
+                <h2 class="text-2xl font-bold mb-2 text-green-600 dark:text-green-400 flex-shrink-0">演習</h2>
+                <div id="exercise-description" class="content-container flex-grow mb-4 overflow-y-auto pr-2 custom-scrollbar"></div>
+                <!-- Container for Monaco Editor -->
+                <div id="code-editor-container" class="w-full border rounded-md border-slate-300 dark:border-slate-700 flex-shrink-0 overflow-hidden" style="height: 250px;"></div>
+                <div class="mt-4 flex justify-between items-center flex-shrink-0">
+                     <button id="check-btn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                        答え合わせ
+                    </button>
+                    <div id="feedback" class="text-right font-medium"></div>
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-between items-center border-t border-gray-200 dark:border-slate-700 pt-4 flex-shrink-0">
+                <button id="prev-btn" class="bg-gray-300 dark:bg-slate-700 hover:bg-gray-400 dark:hover:bg-slate-600 text-gray-800 dark:text-gray-200 font-bold py-2 px-4 rounded-lg transition duration-300 disabled:opacity-50">
+                    ＜ 前へ
+                </button>
+                <div id="slide-counter" class="text-sm text-gray-500 dark:text-gray-400"></div>
+                <button id="next-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 disabled:opacity-50">
+                    次へ ＞
+                </button>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Completion Modal -->
+    <div id="completion-modal" class="fixed inset-0 bg-black/60 z-40 hidden items-center justify-center p-4">
+        <div id="modal-content" class="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-2xl text-center transform scale-95 transition-transform duration-300 max-w-lg w-full">
+            <h2 class="text-3xl font-bold text-yellow-400 mb-4">🎉 おめでとうございます！ 🎉</h2>
+            <p class="text-lg mb-6">全てのチャプターを完了しました！<br>ES6の基本はもうあなたのものです。</p>
+            <button id="close-modal-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg">閉じる</button>
+        </div>
+    </div>
+
+
+    <script src="js/config.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
